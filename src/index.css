@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-surface: #f8f9fa;
+  --color-surface-card: #ffffff;
+  --color-surface-well: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+  --color-primary: #0f172a;
+  --color-primary-hover: #1e293b;
+  --color-boundary: #16a34a;
+  --color-boundary-bg: #f0fdf4;
+  --color-boundary-border: #86efac;
+  --color-boundary-strong-bg: #dcfce7;
+  --color-boundary-strong-border: #22c55e;
+  --color-wicket: #dc2626;
+  --color-wicket-bg: #fef2f2;
+  --color-wicket-border: #fca5a5;
+  --color-extra: #d97706;
+  --color-extra-bg: #fffbeb;
+  --color-extra-border: #fde68a;
+  --color-live: #dc2626;
+}
+
+@layer base {
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100dvh;
+    font-family: var(--font-sans);
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  body {
+    overscroll-behavior: none;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
