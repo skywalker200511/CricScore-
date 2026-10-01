@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchActiveMatch } from '../lib/database.js';
 
+import StickmanCricket from '../components/StickmanCricket.jsx';
+
 export default function HomePage() {
   const navigate = useNavigate();
   const [activeMatch, setActiveMatch] = useState(null);
@@ -23,15 +25,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-dvh flex flex-col items-center justify-center px-4 relative overflow-hidden bg-[#0f172a]">
-      {/* Background Image - Zoomed in on batsman */}
-      <img 
-        src="/hero-bg.jpg" 
-        alt="Cricket Background" 
-        className="absolute inset-0 w-full h-full object-cover object-center scale-150 md:scale-125 opacity-70"
-      />
+      {/* Stickman Background */}
+      <StickmanCricket />
       
-      {/* Dark gradient overlay for readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30 backdrop-blur-[1px]"></div>
+      {/* Subtle overlay to help text pop over the stickman */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/70 to-[#0f172a]/20"></div>
 
       <div className="w-full max-w-md flex flex-col items-center space-y-10 relative z-10">
         {/* Brand */}
