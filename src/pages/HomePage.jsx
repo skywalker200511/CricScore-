@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchActiveMatch } from '../lib/database.js';
+import { fetchActiveMatch, deleteMatch } from '../lib/database.js';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export default function HomePage() {
         {/* Actions */}
         <div className="w-full space-y-3 pt-4">
           <button
-            onClick={() => navigate('/team-select')}
+            onClick={() => navigate('/scorer/team-select')}
             className="w-full py-4 px-6 bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-2xl text-lg font-black tracking-wide flex items-center justify-center gap-2 transition-all shadow-xl active:scale-[0.98]"
           >
             START MATCH
@@ -65,8 +65,6 @@ export default function HomePage() {
                 onClick={async () => {
                   if (confirm('Are you sure you want to delete this match? This cannot be undone.')) {
                     try {
-                      // Import deleteMatch at top of file
-                      const { deleteMatch } = await import('../lib/database.js');
                       await deleteMatch(activeMatch.id);
                       setActiveMatch(null);
                     } catch (err) {
