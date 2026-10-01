@@ -1,24 +1,29 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchActiveMatch, deleteMatch } from '../lib/database.js';
+import { fetchActiveMatch, deleteMatch, fetchAllMatches } from '../lib/database.js';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [activeMatch, setActiveMatch] = useState(null);
+  const [allMatches, setAllMatches] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function checkActiveMatch() {
+    async function loadData() {
       try {
-        const match = await fetchActiveMatch();
-        setActiveMatch(match);
+        const liveMatch = await fetchActiveMatch();
+        setActiveMatch(liveMatch);
+
+        // Fetch all matches for deletion/management
+        const matches = await fetchAllMatches();
+        setAllMatches(matches);
       } catch (err) {
-        console.error('Error checking active match:', err);
+        console.error('Error loading matches:', err);
       } finally {
         setLoading(false);
       }
     }
-    checkActiveMatch();
+    loadData();
   }, []);
 
   return (
@@ -61,26 +66,48 @@ export default function HomePage() {
                   {activeMatch.team_a?.name} vs {activeMatch.team_b?.name}
                 </span>
               </button>
-              <button
-                onClick={async () => {
-                  if (confirm('Are you sure you want to delete this match? This cannot be undone.')) {
-                    try {
-                      await deleteMatch(activeMatch.id);
-                      setActiveMatch(null);
-                    } catch (err) {
-                      console.error('Failed to delete match:', err);
-                      alert('Failed to delete match. Please run the SQL policy update first.');
-                    }
-                  }
-                }}
-                className="w-14 bg-[#fef2f2] border-2 border-[#fca5a5] hover:bg-[#fee2e2] text-[#dc2626] rounded-2xl flex items-center justify-center shadow-sm transition-colors"
-                title="Delete Match"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-              </button>
             </div>
           )}
         </div>
+
+        {/* Match Management Section */}
+        {allMatches.length > 0 && (
+          <div className="w-full mt-12 bg-white/70 p-6 rounded-3xl shadow-sm backdrop-blur-md border border-white/50 space-y-4">
+            <h2 className="text-xl font-black text-[#0f172a] tracking-tight mb-4">Manage Matches</h2>
+            <div className="space-y-3">
+              {allMatches.map(m => (
+                <div key={m.id} className="flex items-center justify-between bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                  <div>
+                    <div className="font-bold text-gray-900 text-sm">
+                      {m.team_a?.name} vs {m.team_b?.name}
+                    </div>
+                    <div className="text-xs text-gray-400 font-medium mt-1">
+                      {new Date(m.created_at).toLocaleDateString()} &middot; <span className="uppercase text-[10px] tracking-wider">{m.status}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (confirm('Are you sure you want to delete this match? This cannot be undone.')) {
+                        try {
+                          await deleteMatch(m.id);
+                          setAllMatches(prev => prev.filter(match => match.id !== m.id));
+                          if (activeMatch?.id === m.id) setActiveMatch(null);
+                        } catch (err) {
+                          console.error('Failed to delete match:', err);
+                          alert('Failed to delete match.');
+                        }
+                      }
+                    }}
+                    className="w-10 h-10 bg-[#fef2f2] hover:bg-[#fee2e2] text-[#dc2626] rounded-xl flex items-center justify-center transition-colors shrink-0"
+                    title="Delete Match"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
