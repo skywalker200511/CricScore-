@@ -90,9 +90,11 @@ export default function ViewerHomePage() {
             <tbody className="text-sm">
               {table.map((row, i) => (
                 <tr key={i} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
-                  <td className="p-4 font-bold text-gray-900 flex items-center gap-3">
-                    <span className="text-gray-400 w-4 text-xs">{i + 1}</span>
-                    {row.name}
+                  <td className="p-4 font-bold text-gray-900">
+                    <div className="flex items-center gap-3">
+                      <span className="text-gray-400 w-4 text-xs">{i + 1}</span>
+                      <span className="truncate">{row.name}</span>
+                    </div>
                   </td>
                   <td className="p-4 text-center text-gray-600 font-medium">{row.played}</td>
                   <td className="p-4 text-center font-bold text-emerald-600">{row.won}</td>
@@ -116,10 +118,10 @@ export default function ViewerHomePage() {
                 </span>
                 <span className="text-gray-400 text-xs font-medium">{new Date(m.created_at).toLocaleDateString()}</span>
               </div>
-              <div className="flex justify-between items-center font-black text-lg text-gray-900">
-                <span className="truncate max-w-[42%]">{m.team_a?.name}</span>
-                <span className="text-gray-300 text-xs font-bold px-2">VS</span>
-                <span className="truncate max-w-[42%] text-right">{m.team_b?.name}</span>
+              <div className="flex justify-between items-center font-black text-lg text-gray-900 min-w-0">
+                <span className="truncate flex-1 text-left">{m.team_a?.name}</span>
+                <span className="text-gray-300 text-xs font-bold px-2 shrink-0">VS</span>
+                <span className="truncate flex-1 text-right">{m.team_b?.name}</span>
               </div>
               {m.winner_team_id && m.status === 'completed' && (
                 <div className="mt-4 pt-3 border-t border-gray-100 text-sm font-semibold text-indigo-600">

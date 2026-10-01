@@ -69,20 +69,20 @@ export default function ViewerTeamsPage() {
             <span className="w-2 h-6 bg-indigo-500 rounded-full inline-block"></span>
             {teams.find(t => t.id === selectedTeam)?.name} Squad
           </h3>
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {Object.values(playerStats)
               .filter(p => p.team_id === selectedTeam)
               .map(p => (
-              <div key={p.id} className="p-5 border border-gray-100 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-md hover:border-gray-200 transition-all flex flex-col">
-                <p className="font-black text-gray-900 text-lg mb-4 leading-tight">{p.name}</p>
-                <div className="mt-auto flex justify-between items-center text-xs font-bold uppercase tracking-wider text-gray-500 border-t border-gray-200/60 pt-3">
-                  <div className="flex flex-col gap-1">
-                    <span>Runs</span>
-                    <span className="text-lg text-gray-900">{p.runs}</span>
+              <div key={p.id} className="p-4 border border-gray-100 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-md hover:border-gray-200 transition-all flex flex-col">
+                <p className="font-black text-gray-900 text-lg mb-4 leading-tight break-words">{p.name}</p>
+                <div className="mt-auto flex gap-6 items-center text-xs font-bold uppercase tracking-wider text-gray-500 border-t border-gray-200/60 pt-3">
+                  <div className="flex gap-2 items-center">
+                    <span>Runs:</span>
+                    <span className="text-sm text-gray-900">{p.runs}</span>
                   </div>
-                  <div className="flex flex-col gap-1 text-right">
-                    <span>Wickets</span>
-                    <span className="text-lg text-gray-900">{p.wickets}</span>
+                  <div className="flex gap-2 items-center">
+                    <span>Wickets:</span>
+                    <span className="text-sm text-gray-900">{p.wickets}</span>
                   </div>
                 </div>
               </div>
