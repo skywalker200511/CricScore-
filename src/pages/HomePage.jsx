@@ -22,12 +22,16 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div 
-      className="min-h-dvh flex flex-col items-center justify-center px-4 bg-cover bg-center relative"
-      style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
-    >
-      {/* Dark overlay for readability */}
-      <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]"></div>
+    <div className="min-h-dvh flex flex-col items-center justify-center px-4 relative overflow-hidden bg-[#0f172a]">
+      {/* Background Image - Zoomed in on batsman */}
+      <img 
+        src="/hero-bg.jpg" 
+        alt="Cricket Background" 
+        className="absolute inset-0 w-full h-full object-cover object-center scale-150 md:scale-125 opacity-70"
+      />
+      
+      {/* Dark gradient overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30 backdrop-blur-[1px]"></div>
 
       <div className="w-full max-w-md flex flex-col items-center space-y-10 relative z-10">
         {/* Brand */}
