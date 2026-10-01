@@ -216,3 +216,15 @@ export function subscribeToDeliveries(inningsId, callback) {
     }, callback)
     .subscribe();
 }
+
+// ============ SECURITY ============
+export async function verifyScorerPin(pinAttempt) {
+  const { data, error } = await supabase.rpc('verify_scorer_pin', {
+    pin_attempt: pinAttempt
+  });
+  if (error) {
+    console.error('Error verifying PIN:', error);
+    return false;
+  }
+  return !!data;
+}
