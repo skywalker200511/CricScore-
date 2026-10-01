@@ -10,6 +10,7 @@ export default function ViewerScorecardPage() {
   const [inningsData, setInningsData] = useState([]);
   const [players, setPlayers] = useState({});
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(1);
 
   useEffect(() => {
     async function load() {
@@ -159,8 +160,6 @@ export default function ViewerScorecardPage() {
     );
   }
 
-  const [activeTab, setActiveTab] = useState(1);
-
   return (
     <div className="max-w-3xl mx-auto p-4 mb-12">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
@@ -180,7 +179,9 @@ export default function ViewerScorecardPage() {
         {result && (
           <div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 text-center">
             <h2 className="text-[10px] font-black tracking-widest text-indigo-500 uppercase mb-1">Match Result</h2>
-            <p className="text-lg font-black text-indigo-900">{result}</p>
+            <p className="text-lg font-black text-indigo-900">
+              {result.includes('won by') ? `${result.split(' won by')[0]} Won` : result}
+            </p>
           </div>
         )}
 

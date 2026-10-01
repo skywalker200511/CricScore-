@@ -121,7 +121,7 @@ export default function ViewerMatchPage() {
             COMPLETED
           </span>
           <h2 className="text-3xl sm:text-4xl font-black text-indigo-600 tracking-tight leading-tight mb-2">
-            {result}
+            {inn1Winner || inn2Winner ? `${inn1Winner ? (innings1?.batting_team_id === match.team_a_id ? match.team_a?.name : match.team_b?.name) : (innings2?.batting_team_id === match.team_a_id ? match.team_a?.name : match.team_b?.name)} Won` : 'Match Tied'}
           </h2>
           <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-16">
             <div className="text-center">
