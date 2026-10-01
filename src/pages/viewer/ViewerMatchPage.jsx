@@ -30,19 +30,21 @@ export default function ViewerMatchPage() {
         setPlayers(pMap);
 
         const currentInn = inv.find(i => i.status === 'in_progress' || i.status === 'live') || inv[inv.length - 1];
-        if (currentInn) {
-          const d = await fetchDeliveries(currentInn.id);
-          setDeliveries(d);
+        
+        // Fetch deliveries for ALL innings so completed view has both scores
+        const deliveryPromises = inv.map(i => fetchDeliveries(i.id));
+        const allDeliveriesArrays = await Promise.all(deliveryPromises);
+        const allDeliveries = allDeliveriesArrays.flat();
+        setDeliveries(allDeliveries);
 
-          if (m.status === 'live') {
-            sub = subscribeToDeliveries(currentInn.id, (payload) => {
-              if (payload.eventType === 'INSERT') {
-                setDeliveries(prev => [...prev, payload.new]);
-              } else if (payload.eventType === 'DELETE') {
-                setDeliveries(prev => prev.filter(del => del.id !== payload.old.id));
-              }
-            });
-          }
+        if (currentInn && m.status === 'live') {
+          sub = subscribeToDeliveries(currentInn.id, (payload) => {
+            if (payload.eventType === 'INSERT') {
+              setDeliveries(prev => [...prev, payload.new]);
+            } else if (payload.eventType === 'DELETE') {
+              setDeliveries(prev => prev.filter(del => del.id !== payload.old.id));
+            }
+          });
         }
       } catch (err) {
         console.error(err);
@@ -76,10 +78,25 @@ export default function ViewerMatchPage() {
   const currentDeliveries = currentInn?.innings_number === 2 ? inn2Deliveries : inn1Deliveries;
   
   let result = null;
+  let inn1Winner = false;
+  let inn2Winner = false;
+  let inn1Color = "text-gray-900";
+  let inn2Color = "text-gray-900";
+
   if (match.status === 'completed' && state1 && state2) {
     const team1Name = innings1.batting_team_id === match.team_a_id ? match.team_a?.name : match.team_b?.name;
     const team2Name = innings2.batting_team_id === match.team_a_id ? match.team_a?.name : match.team_b?.name;
     result = getMatchResult(state1, state2, team1Name, team2Name);
+    
+    if (state1.totalRuns > state2.totalRuns) {
+      inn1Winner = true;
+      inn1Color = "text-emerald-600";
+      inn2Color = "text-rose-600";
+    } else if (state2.totalRuns > state1.totalRuns) {
+      inn2Winner = true;
+      inn1Color = "text-rose-600";
+      inn2Color = "text-emerald-600";
+    }
   }
 
   // Current over deliveries format for display
@@ -99,28 +116,28 @@ export default function ViewerMatchPage() {
       
       {/* MATCH HEADER & RESULT (For completed matches) */}
       {match.status === 'completed' && (
-        <div className="bg-indigo-50 border border-indigo-100 rounded-3xl p-8 text-center shadow-sm">
-          <span className="px-3 py-1 text-[10px] rounded-md font-black uppercase tracking-widest bg-gray-700 text-white mb-4 inline-block">
+        <div className="bg-white border border-gray-200 rounded-3xl p-8 text-center shadow-sm">
+          <span className="px-3 py-1 text-[10px] rounded-md font-black uppercase tracking-widest bg-gray-900 text-white mb-4 inline-block">
             COMPLETED
           </span>
-          <h2 className="text-3xl sm:text-4xl font-black text-indigo-900 tracking-tight leading-tight mb-2">
+          <h2 className="text-3xl sm:text-4xl font-black text-indigo-600 tracking-tight leading-tight mb-2">
             {result}
           </h2>
-          <div className="mt-6 flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-12">
+          <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-6 sm:gap-16">
             <div className="text-center">
-              <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
                 {innings1?.batting_team_id === match.team_a_id ? match.team_a?.name : match.team_b?.name}
               </p>
-              <p className="text-3xl font-black text-gray-900 tabular-nums">
+              <p className={`text-4xl font-black tabular-nums ${inn1Color}`}>
                 {state1?.totalRuns}/{state1?.totalWickets} <span className="text-lg text-gray-400">({state1?.oversDisplay})</span>
               </p>
             </div>
-            <div className="hidden sm:block w-px h-12 bg-indigo-200"></div>
+            <div className="hidden sm:block w-px h-16 bg-gray-200"></div>
             <div className="text-center">
-              <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-1">
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5">
                 {innings2?.batting_team_id === match.team_a_id ? match.team_a?.name : match.team_b?.name}
               </p>
-              <p className="text-3xl font-black text-gray-900 tabular-nums">
+              <p className={`text-4xl font-black tabular-nums ${inn2Color}`}>
                 {state2 ? `${state2.totalRuns}/${state2.totalWickets}` : 'DNB'} {state2 && <span className="text-lg text-gray-400">({state2.oversDisplay})</span>}
               </p>
             </div>
