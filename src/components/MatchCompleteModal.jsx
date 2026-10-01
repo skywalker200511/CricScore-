@@ -7,6 +7,7 @@ export default function MatchCompleteModal({
   team2Name, team2Runs, team2Wickets, team2Overs,
   result,
   matchId,
+  onStartSuperOver,
 }) {
   const navigate = useNavigate();
 
@@ -31,9 +32,17 @@ export default function MatchCompleteModal({
         )}
 
         <div className="space-y-2">
+          {onStartSuperOver && (
+            <button
+              onClick={onStartSuperOver}
+              className="w-full py-3 rounded-xl text-sm font-bold bg-[#dc2626] text-white hover:bg-[#b91c1c] active:scale-[0.99] transition-all animate-pulse"
+            >
+              START SUPER OVER
+            </button>
+          )}
           <button
             onClick={() => navigate(`/scorecard/${matchId}`)}
-            className="w-full py-3 rounded-xl text-sm font-bold bg-[#0f172a] text-white hover:bg-[#1e293b] active:scale-[0.99] transition-colors"
+            className="w-full py-3 rounded-xl text-sm font-bold bg-[#0f172a] text-white hover:bg-[#1e293b] active:scale-[0.99] transition-all"
           >
             VIEW SCORECARD
           </button>

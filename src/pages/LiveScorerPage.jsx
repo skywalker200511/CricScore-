@@ -103,7 +103,8 @@ export default function LiveScorerPage() {
 
         // Reconstruct state from deliveries
         if (dels.length > 0) {
-          const state = calculateInningsState(dels);
+          const oversLimit = currentInn.innings_number > 2 ? 1 : OVERS_PER_INNINGS;
+          const state = calculateInningsState(dels, oversLimit);
           const lastDelivery = dels[dels.length - 1];
           
           // Reconstruct striker/non-striker
@@ -217,6 +218,8 @@ export default function LiveScorerPage() {
   }
 
   // Submit delivery
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
   async function handleSubmitDelivery() {
     if (!selectedOutcome || !strikerId || !nonStrikerId || !bowlerId || submitting) return;
 
@@ -248,7 +251,8 @@ export default function LiveScorerPage() {
       setDeliveries(newDeliveries);
 
       // Calculate new state
-      const newState = calculateInningsState(newDeliveries);
+      const oversLimit = currentInnings.innings_number > 2 ? 1 : OVERS_PER_INNINGS;
+      const newState = calculateInningsState(newDeliveries, oversLimit);
 
       // Update strike
       const strikeResult = getStrikeAfterDelivery(strikerId, nonStrikerId, saved);
@@ -313,6 +317,8 @@ export default function LiveScorerPage() {
       }
 
       setSelectedOutcome(null);
+      setSubmitSuccess(true);
+      setTimeout(() => setSubmitSuccess(false), 800);
     } catch (err) {
       console.error('Error submitting delivery:', err);
       setError('Failed to submit delivery');
@@ -406,6 +412,38 @@ export default function LiveScorerPage() {
     } catch (err) {
       console.error('Error starting second innings:', err);
       setError('Failed to start second innings');
+    }
+  }
+
+  // Handle start super over
+  async function handleStartSuperOver() {
+    setShowMatchComplete(false);
+    try {
+      // In Super Over, team that batted second (currentInnings) usually bats first in Super Over.
+      const thirdBattingTeamId = currentInnings.batting_team_id;
+      const thirdBowlingTeamId = currentInnings.bowling_team_id;
+
+      const newInn = await createSuperOverInnings(matchId, thirdBattingTeamId, thirdBowlingTeamId, 3);
+      await updateMatchStatus(matchId, 'live', 3);
+
+      setCurrentInnings(newInn);
+      setAllInnings([...allInnings, newInn]);
+      setDeliveries([]);
+      setFirstInningsState(null); // Reset for Super Over chase calculation later
+      
+      const batPlayers = await fetchPlayersByTeam(thirdBattingTeamId);
+      const bowlPlayers = await fetchPlayersByTeam(thirdBowlingTeamId);
+      setBattingPlayers(batPlayers);
+      setBowlingPlayers(bowlPlayers);
+
+      setStrikerId(null);
+      setNonStrikerId(null);
+      setBowlerId('');
+      setCompletedOverNumber(0);
+      setShowBatsmenModal(true);
+    } catch (err) {
+      console.error('Error starting super over:', err);
+      setError('Failed to start super over');
     }
   }
 
@@ -704,14 +742,16 @@ export default function LiveScorerPage() {
           {/* Submit Delivery */}
           <button
             onClick={handleSubmitDelivery}
-            disabled={!selectedOutcome || submitting}
+            disabled={(!selectedOutcome && !submitSuccess) || submitting}
             className={`w-full py-4 rounded-xl text-base font-bold flex items-center justify-center gap-1.5 transition-all active:scale-[0.99] ${
-              selectedOutcome && !submitting
-                ? 'bg-[#16a34a] text-white hover:bg-[#15803d]'
-                : 'bg-[#0f172a] text-white opacity-60 cursor-not-allowed'
+              submitSuccess 
+                ? 'bg-[#10b981] text-white ring-4 ring-[#10b981]/30'
+                : selectedOutcome && !submitting
+                  ? 'bg-[#16a34a] text-white hover:bg-[#15803d]'
+                  : 'bg-[#0f172a] text-white opacity-60 cursor-not-allowed'
             }`}
           >
-            {submitting ? 'SUBMITTING...' : 'SUBMIT DELIVERY'}
+            {submitSuccess ? '✓ RECORDED' : submitting ? 'SUBMITTING...' : 'SUBMIT DELIVERY'}
           </button>
 
           {/* Secondary Actions */}
@@ -780,6 +820,7 @@ export default function LiveScorerPage() {
         open={showMatchComplete}
         matchId={matchId}
         {...matchCompleteData}
+        onStartSuperOver={(matchCompleteData?.result === 'Match Tied' && currentInnings?.innings_number === 2) ? handleStartSuperOver : null}
       />
 
       <UndoConfirmModal

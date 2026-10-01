@@ -35,7 +35,7 @@ export function getDeliveryTotalRuns(delivery) {
 }
 
 // Build complete innings state from delivery history
-export function calculateInningsState(deliveries) {
+export function calculateInningsState(deliveries, oversLimit = OVERS_PER_INNINGS) {
   let totalRuns = 0;
   let totalWickets = 0;
   let legalBalls = 0;
@@ -137,7 +137,7 @@ export function calculateInningsState(deliveries) {
   }
 
   // Check if innings is complete
-  const isInningsComplete = completedOvers >= OVERS_PER_INNINGS || totalWickets >= (PLAYERS_PER_TEAM - 1);
+  const isInningsComplete = completedOvers >= oversLimit || totalWickets >= (PLAYERS_PER_TEAM - 1);
 
   return {
     totalRuns,

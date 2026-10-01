@@ -132,6 +132,23 @@ export async function createSecondInnings(matchId, battingTeamId, bowlingTeamId,
   return data;
 }
 
+export async function createSuperOverInnings(matchId, battingTeamId, bowlingTeamId, inningsNumber, target = null) {
+  const { data, error } = await supabase
+    .from('innings')
+    .insert({
+      match_id: matchId,
+      batting_team_id: battingTeamId,
+      bowling_team_id: bowlingTeamId,
+      innings_number: inningsNumber,
+      status: 'live',
+      target: target,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
 // ============ DELIVERIES ============
 export async function fetchDeliveries(inningsId) {
   const { data, error } = await supabase
