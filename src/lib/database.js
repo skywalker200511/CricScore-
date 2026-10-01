@@ -81,6 +81,14 @@ export async function updateMatchStatus(matchId, status, currentInnings, winnerT
   if (error) throw error;
 }
 
+export async function deleteMatch(matchId) {
+  const { error } = await supabase
+    .from('matches')
+    .delete()
+    .eq('id', matchId);
+  if (error) throw error;
+}
+
 // ============ INNINGS ============
 export async function fetchInnings(matchId) {
   const { data, error } = await supabase
