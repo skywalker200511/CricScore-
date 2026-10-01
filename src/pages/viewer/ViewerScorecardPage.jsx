@@ -159,9 +159,11 @@ export default function ViewerScorecardPage() {
     );
   }
 
+  const [activeTab, setActiveTab] = useState(1);
+
   return (
     <div className="max-w-3xl mx-auto p-4 mb-12">
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
         <button
           onClick={() => navigate(`/match/${matchId}`)}
           className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-xl bg-white border border-gray-200 hover:bg-gray-50 transition-colors text-gray-900 shadow-sm"
@@ -182,8 +184,24 @@ export default function ViewerScorecardPage() {
           </div>
         )}
 
-        {innings1 && renderInningsScorecard(innings1)}
-        {innings2 && renderInningsScorecard(innings2)}
+        <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
+          <button 
+            onClick={() => setActiveTab(1)}
+            className={`flex-1 py-2 text-sm font-black rounded-lg transition-all ${activeTab === 1 ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+          >
+            1st Innings
+          </button>
+          <button 
+            onClick={() => setActiveTab(2)}
+            disabled={!innings2}
+            className={`flex-1 py-2 text-sm font-black rounded-lg transition-all ${activeTab === 2 ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'} disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            2nd Innings
+          </button>
+        </div>
+
+        {activeTab === 1 && innings1 && renderInningsScorecard(innings1)}
+        {activeTab === 2 && innings2 && renderInningsScorecard(innings2)}
       </div>
     </div>
   );

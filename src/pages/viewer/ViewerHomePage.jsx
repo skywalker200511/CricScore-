@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchAllMatches, fetchTeams } from '../../lib/database.js';
+import { fetchAllMatches, fetchTeams, fetchAllInnings, fetchAllDeliveries } from '../../lib/database.js';
 
 export default function ViewerHomePage() {
   const [matches, setMatches] = useState([]);
   const [teams, setTeams] = useState([]);
+  const [innings, setInnings] = useState([]);
+  const [deliveries, setDeliveries] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const [m, t] = await Promise.all([fetchAllMatches(), fetchTeams()]);
+        const [m, t, i, d] = await Promise.all([
+          fetchAllMatches(), 
+          fetchTeams(),
+          fetchAllInnings(),
+          fetchAllDeliveries()
+        ]);
         setMatches(m);
         setTeams(t);
+        setInnings(i);
+        setDeliveries(d);
       } catch (err) {
         console.error(err);
       } finally {
@@ -30,19 +39,33 @@ export default function ViewerHomePage() {
   });
 
   matches.forEach(m => {
-    if (m.status === 'completed' && m.winner_team_id) {
-      if (points[m.team_a_id]) points[m.team_a_id].played++;
-      if (points[m.team_b_id]) points[m.team_b_id].played++;
+    if (m.status === 'completed') {
+      const matchInnings = innings.filter(i => i.match_id === m.id);
+      const inn1 = matchInnings.find(i => i.innings_number === 1);
+      const inn2 = matchInnings.find(i => i.innings_number === 2);
       
-      const winnerId = m.winner_team_id;
-      const loserId = m.team_a_id === winnerId ? m.team_b_id : m.team_a_id;
-      
-      if (points[winnerId]) {
-        points[winnerId].won++;
-        points[winnerId].pts += 2;
-      }
-      if (points[loserId]) {
-        points[loserId].lost++;
+      if (inn1 && inn2) {
+        const inn1Runs = deliveries.filter(d => d.innings_id === inn1.id).reduce((sum, d) => sum + d.total_runs, 0);
+        const inn2Runs = deliveries.filter(d => d.innings_id === inn2.id).reduce((sum, d) => sum + d.total_runs, 0);
+        
+        if (points[m.team_a_id]) points[m.team_a_id].played++;
+        if (points[m.team_b_id]) points[m.team_b_id].played++;
+        
+        if (inn1Runs > inn2Runs) {
+          const winnerId = inn1.batting_team_id;
+          const loserId = inn2.batting_team_id;
+          points[winnerId].won++; points[winnerId].pts += 2;
+          points[loserId].lost++;
+        } else if (inn2Runs > inn1Runs) {
+          const winnerId = inn2.batting_team_id;
+          const loserId = inn1.batting_team_id;
+          points[winnerId].won++; points[winnerId].pts += 2;
+          points[loserId].lost++;
+        } else {
+          // tie
+          points[m.team_a_id].pts += 1;
+          points[m.team_b_id].pts += 1;
+        }
       }
     }
   });
