@@ -47,12 +47,12 @@ export default function ViewerTeamsPage() {
     <div className="max-w-5xl mx-auto p-4 space-y-6 mb-12">
       <h2 className="text-2xl font-black text-gray-900 tracking-tight">Teams</h2>
       
-      <div className="flex gap-2 overflow-x-auto pb-4 snap-x hide-scrollbar">
+      <div className="flex flex-wrap gap-2 pb-4">
         {teams.map(t => (
           <button 
             key={t.id}
             onClick={() => setSelectedTeam(t.id)}
-            className={`px-5 py-2.5 rounded-xl whitespace-nowrap font-bold text-sm transition-all snap-start ${
+            className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex-1 min-w-[120px] text-center ${
               selectedTeam === t.id 
                 ? 'bg-gray-900 text-white shadow-md' 
                 : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300 hover:bg-gray-50'
