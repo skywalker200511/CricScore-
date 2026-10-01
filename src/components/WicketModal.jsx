@@ -8,6 +8,7 @@ const DISMISSAL_TYPES = [
   { value: 'stumped', label: 'Stumped' },
   { value: 'hit_wicket', label: 'Hit Wicket' },
   { value: 'retired', label: 'Retired' },
+  { value: 'hit_out', label: 'Hit Out (Box Cricket)' },
 ];
 
 export default function WicketModal({

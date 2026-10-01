@@ -20,6 +20,7 @@ export const DISMISSAL_TYPES = [
   'stumped',
   'hit_wicket',
   'retired',
+  'hit_out',
 ];
 
 // Determine if a delivery is a legal ball
