@@ -46,7 +46,14 @@ export default function TeamSelectPage() {
   const team2Options = teams.filter(t => t.id !== team1Id);
 
   return (
-    <div className="min-h-dvh bg-[#f8f9fa] flex flex-col">
+    <div 
+      className="min-h-dvh flex flex-col bg-cover bg-center bg-no-repeat bg-fixed relative"
+      style={{ backgroundImage: 'url(/team-select-bg.png)' }}
+    >
+      {/* Optional subtle overlay to ensure cards remain perfectly readable */}
+      <div className="absolute inset-0 bg-white/40 pointer-events-none"></div>
+      
+      <div className="relative z-10 flex flex-col flex-1">
       {/* Header */}
       <div className="px-4 py-4 flex items-center gap-3">
         <button
@@ -156,6 +163,7 @@ export default function TeamSelectPage() {
         >
           {creating ? 'Creating Match...' : 'CONTINUE TO SCORER'}
         </button>
+      </div>
       </div>
     </div>
   );
