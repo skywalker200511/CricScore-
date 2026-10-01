@@ -17,7 +17,7 @@ export default function TeamSelectPage() {
         const data = await fetchTeams();
         setTeams(data);
       } catch (err) {
-        setError('Failed to load teams');
+        setError(`Failed to load teams: ${err.message || err.toString()}`);
         console.error(err);
       }
     }
