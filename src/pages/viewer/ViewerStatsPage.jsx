@@ -59,20 +59,33 @@ export default function ViewerStatsPage() {
     p.economy = p.ballsBowled > 0 ? (p.runsConceded / p.ballsBowled) * 6 : 0;
   });
 
-  const topScorers = [...playersList].sort((a, b) => b.runs - a.runs || b.strikeRate - a.strikeRate);
+  const topScorers = [...playersList].sort((a, b) => {
+    if (b.runs !== a.runs) return b.runs - a.runs;
+    return b.strikeRate - a.strikeRate;
+  });
   
   // Sort by wickets first, then lowest economy, then highest balls bowled (to break ties fairly)
   const topWicketTakers = [...playersList]
     .filter(p => p.wickets > 0)
-    .sort((a, b) => b.wickets - a.wickets || a.economy - b.economy || b.ballsBowled - a.ballsBowled);
+    .sort((a, b) => {
+      if (b.wickets !== a.wickets) return b.wickets - a.wickets;
+      if (a.economy !== b.economy) return a.economy - b.economy;
+      return b.ballsBowled - a.ballsBowled;
+    });
     
   const bestEconomy = [...playersList]
     .filter(p => p.ballsBowled >= 12)
-    .sort((a, b) => a.economy - b.economy || b.wickets - a.wickets);
+    .sort((a, b) => {
+      if (a.economy !== b.economy) return a.economy - b.economy;
+      return b.wickets - a.wickets;
+    });
     
   const bestStrikeRate = [...playersList]
     .filter(p => p.runs >= 20)
-    .sort((a, b) => b.strikeRate - a.strikeRate || b.runs - a.runs);
+    .sort((a, b) => {
+      if (b.strikeRate !== a.strikeRate) return b.strikeRate - a.strikeRate;
+      return b.runs - a.runs;
+    });
 
   const StatCard = ({ title, player, value, subtext }) => (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col transition-all hover:shadow-md">
@@ -133,7 +146,7 @@ export default function ViewerStatsPage() {
               </tr>
             </thead>
             <tbody>
-              {topScorers.slice(0, 10).filter(p => p.runs > 0).map((p, i) => (
+              {topScorers.filter(p => p.runs > 0).slice(0, 5).map((p, i) => (
                 <tr key={p.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                   <td className="p-4 flex items-center gap-3">
                     <span className="text-gray-400 font-bold text-xs w-4">{i + 1}</span>
@@ -161,7 +174,7 @@ export default function ViewerStatsPage() {
               </tr>
             </thead>
             <tbody>
-              {topWicketTakers.slice(0, 10).filter(p => p.wickets > 0).map((p, i) => (
+              {topWicketTakers.filter(p => p.wickets > 0).slice(0, 5).map((p, i) => (
                 <tr key={p.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                   <td className="p-4 flex items-center gap-3">
                     <span className="text-gray-400 font-bold text-xs w-4">{i + 1}</span>
