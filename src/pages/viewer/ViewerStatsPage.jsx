@@ -27,20 +27,23 @@ export default function ViewerStatsPage() {
   players.forEach(p => {
     stats[p.id] = {
       id: p.id, name: p.name, teamName: p.team?.name,
-      runs: 0, ballsFaced: 0,
-      wickets: 0, runsConceded: 0, ballsBowled: 0
+      runs: 0, ballsFaced: 0, fours: 0, sixes: 0,
+      wickets: 0, runsConceded: 0, ballsBowled: 0,
     };
   });
 
   deliveries.forEach(d => {
     if (d.striker_id && stats[d.striker_id]) {
-      stats[d.striker_id].runs += d.batter_runs;
+      stats[d.striker_id].runs += (d.batter_runs || 0);
+      if (d.batter_runs === 4) stats[d.striker_id].fours += 1;
+      if (d.batter_runs === 6) stats[d.striker_id].sixes += 1;
+      
       if (d.extra_type !== 'wide' && d.extra_type !== 'no_ball') {
         stats[d.striker_id].ballsFaced += 1;
       }
     }
     if (d.bowler_id && stats[d.bowler_id]) {
-      stats[d.bowler_id].runsConceded += (d.batter_runs + d.extra_runs);
+      stats[d.bowler_id].runsConceded += ((d.batter_runs || 0) + (d.extra_runs || 0));
       if (d.extra_type !== 'wide' && d.extra_type !== 'no_ball') {
         stats[d.bowler_id].ballsBowled += 1;
       }
@@ -57,9 +60,19 @@ export default function ViewerStatsPage() {
   });
 
   const topScorers = [...playersList].sort((a, b) => b.runs - a.runs || b.strikeRate - a.strikeRate);
-  const topWicketTakers = [...playersList].sort((a, b) => b.wickets - a.wickets || a.economy - b.economy);
-  const bestEconomy = [...playersList].filter(p => p.ballsBowled >= 12).sort((a, b) => a.economy - b.economy);
-  const bestStrikeRate = [...playersList].filter(p => p.runs >= 20).sort((a, b) => b.strikeRate - a.strikeRate);
+  
+  // Sort by wickets first, then lowest economy, then highest balls bowled (to break ties fairly)
+  const topWicketTakers = [...playersList]
+    .filter(p => p.wickets > 0)
+    .sort((a, b) => b.wickets - a.wickets || a.economy - b.economy || b.ballsBowled - a.ballsBowled);
+    
+  const bestEconomy = [...playersList]
+    .filter(p => p.ballsBowled >= 12)
+    .sort((a, b) => a.economy - b.economy || b.wickets - a.wickets);
+    
+  const bestStrikeRate = [...playersList]
+    .filter(p => p.runs >= 20)
+    .sort((a, b) => b.strikeRate - a.strikeRate || b.runs - a.runs);
 
   const StatCard = ({ title, player, value, subtext }) => (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col transition-all hover:shadow-md">
