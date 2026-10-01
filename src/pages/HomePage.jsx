@@ -22,23 +22,29 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="min-h-dvh bg-[#f8f9fa] flex flex-col items-center justify-center px-4">
-      <div className="w-full max-w-md flex flex-col items-center space-y-8">
+    <div 
+      className="min-h-dvh flex flex-col items-center justify-center px-4 bg-cover bg-center relative"
+      style={{ backgroundImage: 'url(/hero-bg.jpg)' }}
+    >
+      {/* Dark overlay for readability */}
+      <div className="absolute inset-0 bg-black/65 backdrop-blur-[2px]"></div>
+
+      <div className="w-full max-w-md flex flex-col items-center space-y-10 relative z-10">
         {/* Brand */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-extrabold text-[#0f172a] tracking-tight">
+        <div className="text-center space-y-3">
+          <h1 className="text-5xl font-black text-white tracking-tight drop-shadow-xl">
             CricScore+
           </h1>
-          <p className="text-base text-[#64748b] font-medium">
-            Simple live scoring for box cricket
+          <p className="text-lg text-gray-200 font-semibold drop-shadow-md">
+            Live Box Cricket Scoring
           </p>
         </div>
 
         {/* Actions */}
-        <div className="w-full space-y-3">
+        <div className="w-full space-y-4">
           <button
             onClick={() => navigate('/team-select')}
-            className="w-full py-4 px-6 bg-[#0f172a] hover:bg-[#1e293b] text-white rounded-xl text-lg font-bold tracking-wide flex items-center justify-center gap-2 transition-colors active:scale-[0.99]"
+            className="w-full py-4 px-6 bg-white hover:bg-gray-100 text-[#0f172a] rounded-xl text-lg font-black tracking-wide flex items-center justify-center gap-2 transition-all shadow-2xl active:scale-[0.98]"
           >
             START MATCH
           </button>
@@ -46,11 +52,13 @@ export default function HomePage() {
           {activeMatch && (
             <button
               onClick={() => navigate(`/scorer/${activeMatch.id}`)}
-              className="w-full py-3 px-6 bg-white border border-[#e2e8f0] hover:border-[#cbd5e1] text-[#0f172a] rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-3.5 px-6 bg-black/40 hover:bg-black/60 border border-white/20 text-white rounded-xl text-sm font-bold flex flex-col items-center justify-center gap-1.5 transition-all backdrop-blur-md"
             >
-              <span className="w-2 h-2 rounded-full bg-[#dc2626] animate-pulse"></span>
-              RESUME LIVE MATCH
-              <span className="text-[#64748b] font-normal">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444] animate-pulse shadow-[0_0_8px_#ef4444]"></span>
+                RESUME LIVE MATCH
+              </div>
+              <span className="text-gray-300 font-normal text-xs">
                 {activeMatch.team_a?.name} vs {activeMatch.team_b?.name}
               </span>
             </button>
