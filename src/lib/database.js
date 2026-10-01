@@ -228,3 +228,33 @@ export async function verifyScorerPin(pinAttempt) {
   }
   return !!data;
 }
+
+// ============ VIEWER FUNCTIONS ============
+export async function fetchAllMatches() {
+  const { data, error } = await supabase
+    .from('matches')
+    .select('*, team_a:teams!matches_team_a_id_fkey(*), team_b:teams!matches_team_b_id_fkey(*)')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  
+  // also get winner_team_id if it exists, actually we don't have a foreign key for winner_team_id defined in schema? Wait, we can just fetch all teams and map them, or the view will just use team_id.
+  return data;
+}
+
+export async function fetchAllDeliveries() {
+  const { data, error } = await supabase.from('deliveries').select('*');
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchAllPlayers() {
+  const { data, error } = await supabase.from('players').select('*, team:teams(*)');
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchAllInnings() {
+  const { data, error } = await supabase.from('innings').select('*');
+  if (error) throw error;
+  return data;
+}
