@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { fetchMatch, fetchInnings, fetchDeliveries, fetchPlayersByTeam, subscribeToDeliveries } from '../../lib/database.js';
 
 export default function ViewerMatchPage() {
@@ -198,6 +198,16 @@ export default function ViewerMatchPage() {
             ) : <div className="text-gray-400 text-sm font-medium">No current bowler</div>}
           </div>
         </div>
+      </div>
+      
+      {/* Full Scorecard Link */}
+      <div className="mt-6">
+        <Link 
+          to={`/match/${matchId}/scorecard`}
+          className="w-full py-4 bg-gray-900 text-white rounded-2xl font-black tracking-wide text-center flex items-center justify-center hover:bg-gray-800 transition-colors shadow-xl active:scale-[0.98]"
+        >
+          VIEW FULL SCORECARD
+        </Link>
       </div>
     </div>
   );

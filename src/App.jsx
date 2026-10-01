@@ -7,6 +7,8 @@ import ViewerStatsPage from './pages/viewer/ViewerStatsPage.jsx';
 import ViewerTeamsPage from './pages/viewer/ViewerTeamsPage.jsx';
 import ViewerMatchPage from './pages/viewer/ViewerMatchPage.jsx';
 
+import ViewerScorecardPage from './pages/viewer/ViewerScorecardPage.jsx';
+
 // Scorer
 import ScorerLayout from './layouts/ScorerLayout.jsx';
 import HomePage from './pages/HomePage.jsx';
@@ -23,6 +25,7 @@ export default function App() {
         <Route path="/stats" element={<ViewerStatsPage />} />
         <Route path="/teams" element={<ViewerTeamsPage />} />
         <Route path="/match/:matchId" element={<ViewerMatchPage />} />
+        <Route path="/match/:matchId/scorecard" element={<ViewerScorecardPage />} />
       </Route>
 
       {/* Protected Scorer Routes */}
