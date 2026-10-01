@@ -85,7 +85,7 @@ export default function TeamSelectPage() {
                 if (e.target.value === team2Id) setTeam2Id('');
                 setBattingFirstId('');
               }}
-              className="w-full bg-transparent text-[#0f172a] text-base font-semibold appearance-none py-1 focus:outline-none cursor-pointer"
+              className="w-full bg-transparent text-[#0f172a] text-base font-semibold appearance-none py-1 focus:outline-none cursor-pointer truncate pr-8"
             >
               <option value="">Select Team</option>
               {teams.map(t => (
@@ -95,7 +95,7 @@ export default function TeamSelectPage() {
           </div>
 
           {/* Team 2 */}
-          <div className="bg-white border border-[#e2e8f0] rounded-xl p-4 space-y-1">
+          <div className="bg-white border border-[#e2e8f0] rounded-xl p-4 space-y-1 relative">
             <label className="text-xs font-bold tracking-wider text-[#94a3b8] uppercase" htmlFor="team2">
               Team 2
             </label>
@@ -106,7 +106,7 @@ export default function TeamSelectPage() {
                 setTeam2Id(e.target.value);
                 setBattingFirstId('');
               }}
-              className="w-full bg-transparent text-[#0f172a] text-base font-semibold appearance-none py-1 focus:outline-none cursor-pointer"
+              className="w-full bg-transparent text-[#0f172a] text-base font-semibold appearance-none py-1 focus:outline-none cursor-pointer truncate pr-8"
             >
               <option value="">Select Team</option>
               {team2Options.map(t => (
@@ -125,7 +125,7 @@ export default function TeamSelectPage() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setBattingFirstId(team1Id)}
-                className={`p-4 rounded-xl border-2 text-center font-bold text-sm transition-all ${
+                className={`p-3 rounded-xl border-2 text-center font-bold text-sm transition-all truncate ${
                   battingFirstId === team1Id
                     ? 'bg-[#0f172a] text-white border-[#0f172a]'
                     : 'bg-white text-[#0f172a] border-[#e2e8f0] hover:border-[#cbd5e1]'
@@ -135,7 +135,7 @@ export default function TeamSelectPage() {
               </button>
               <button
                 onClick={() => setBattingFirstId(team2Id)}
-                className={`p-4 rounded-xl border-2 text-center font-bold text-sm transition-all ${
+                className={`p-3 rounded-xl border-2 text-center font-bold text-sm transition-all truncate ${
                   battingFirstId === team2Id
                     ? 'bg-[#0f172a] text-white border-[#0f172a]'
                     : 'bg-white text-[#0f172a] border-[#e2e8f0] hover:border-[#cbd5e1]'
